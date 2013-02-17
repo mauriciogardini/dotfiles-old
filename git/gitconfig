@@ -1,0 +1,22 @@
+[alias]
+    co = checkout
+    ci = commit
+    cp = cherry-pick
+    st = status
+    br = branch
+    df = diff
+    lg = log -p
+
+[user]
+    name = Maurício Gardini
+    email = mauriciogardini@gmail.com
+    editor = vim
+
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+    ui = auto
+
+[core]
+    excludesfile = ~/.gitignore

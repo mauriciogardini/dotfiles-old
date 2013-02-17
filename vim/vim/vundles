@@ -1,0 +1,6 @@
+" Distraction-free writing mode
+Bundle 'mikewest/vimroom'
+" Text surrounding facilitator
+Bundle 'tpope/vim-surround'
+" Text switching facilitator
+Bundle 'AndrewRadev/switch.vim'

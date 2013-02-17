@@ -1,0 +1,185 @@
+" Use vim settings rather than vi settings.
+set nocompatible
+
+" =============== Vundle Initialization ===============
+" Initializes vundle.
+source ~/.vim/vundlerc
+" Load bundles.
+source ~/.vim/vundles
+
+" =============== Theme Enabling ===============
+" Enable color syntax highlighting.
+syntax enable
+colorscheme jellybeans
+set t_Co=256
+
+" =============== Indentation ===============
+" Controls how many columns a tab counts for.
+set tabstop=4
+" Controls how many columns text is indented with > and <.
+set shiftwidth=4
+" Inserts the ammount of space characters in 'tabstop' property instead of tabs.
+set expandtab
+" Removes the ammount of space characters in 'tabstop' when backspace is pressed.
+set softtabstop=4
+" Copy indent from current line when starting a new line.
+set autoindent
+" Round indent to multiple of 'shiftwidth'.
+set shiftround
+" Allows backspacing over autoindent, line breaks and over the start of insert.
+set backspace=indent,eol,start
+
+" =============== Searching ===============
+" Enables search result's highlighting.
+set hlsearch
+" Enables incremental search.
+set incsearch
+
+" =============== Scrolling ===============
+" Minimal number of screen lines to keep above and below the cursor.
+set scrolloff=5
+" When a line exceeds the width of the viewable screen, the screen will scroll
+" horizontally to show the rest of the line.
+set nowrap
+" Faster terminal redrawing.
+set ttyfast
+" Highlights the column in the 80th character.
+set textwidth=80
+set colorcolumn=+1
+highlight ColorColumn ctermbg=8
+" =============== Encoding ===============
+set encoding=utf-8
+
+" =============== Completion ===============
+set wildmenu
+set wildmode=list:longest
+
+" =============== On Screen Information ===============
+set number
+" Shows tabstops, spaces and newlines.
+set list
+" Change the default tab and EOL characters.
+set listchars=tab:▸\ ,eol:¬
+" Will only fold when specified by a marker.
+set foldmethod=marker
+" Shows the status line.
+set laststatus=2
+" Status line formatting:
+" %< - Truncation point;
+" %f - Relative path to file;
+" %m - 'Modified' flag;
+" %r - 'Readonly' flag;
+" %y - Filetype;
+" %= - Split point for left/right justification;
+" %l - Current line number;
+" %c - Current colum number;
+" %L - Number of lines.
+set statusline=%<%f\ %m\%r\%y%=\ [%l\,%c]\ %LL
+
+" =============== Language-Specific Indentation Mods ===============
+" Sets 2-spaces indentation for Ruby.
+autocmd Filetype ruby setlocal tabstop=2 softtabstop=2 shiftwidth=2
+autocmd FileType html setlocal shiftwidth=2 tabstop=2
+autocmd FileType python setlocal shiftwidth=4 softtabstop=4
+
+" =============== Keyboard Remappings ===============
+" , - Leader
+let mapleader = ','
+" fn + F1 (Normal mode) - Shows Syntastic.
+nnoremap <silent><leader>1 :Errors<cr>
+" fn + F1 (Insert mode) - Hides Syntastic.
+inoremap <silent><leader>1 <esc>:Errors<cr>
+" Leader + F5 (Normal mode) - Strips trailing whitespaces.
+nnoremap <silent><leader>0 :call <SID>StripTrailingWhitespaces()<CR>
+" fn + z (Normal mode) - Clears search highlights.
+nnoremap <silent><leader>9 :noh<cr>
+" fn + Enter (Normal mode) - Break a line.
+nnoremap <silent><leader><cr> i<cr><esc>
+nnoremap <tab> >>
+nnoremap <s-tab> <<
+vnoremap <tab> >gv
+vnoremap <s-tab> <gv
+" tab (Insert mode) - Autocompletes.
+inoremap <tab> <c-r>=SmartTabComplete()<CR>
+" Arrows - Moves between splits (Normal and insert mode).
+nnoremap <Up> <C-w>k
+nnoremap <Down> <C-w>j
+nnoremap <Left> <C-w>h
+nnoremap <Right> <C-w>l
+inoremap <Up> <NOP>
+inoremap <Down> <NOP>
+inoremap <Left> <NOP>
+inoremap <Right> <NOP>
+" Disables arrows (Visual mode).
+vnoremap <Up> <NOP>
+vnoremap <Down> <NOP>
+vnoremap <Left> <NOP>
+vnoremap <Right> <NOP>
+" _ - Switch text following the pre-configured parameters (Normal mode)
+nnoremap _ :Switch<cr>
+nnoremap <silent><leader>2 :VimroomToggle<cr>
+" =============== Bundle-Specific Mods ===============
+" #Syntastic
+" Automatically opens Syntastic when there are errors and closes when they are fixed.
+let g:syntastic_auto_loc_list=1
+" Use '>>' to display syntax errors in the sign column.
+let g:syntastic_enable_signs=1
+
+" #VimRoom
+" Sets VimRoom width to 100 characters.
+let g:vimroom_width=100
+
+" #Switch
+" Sets Switch definitions.
+let g:switch_definitions =
+    \ [
+    \   ['True', 'False'],
+    \   ['true', 'false'],
+    \   ['&&', '||'],
+    \ ]
+" #LaTeX
+" Disable placeholders.
+let g:Imap_UsePlaceHolders=0
+" Disable folding.
+let g:Tex_Folding=0
+" Makes vim invoke Latex-Suite when you open a tex file (Required).
+filetype plugin on
+" Set the grep program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+" Enables automatic indentation as you type.
+filetype indent on
+" Sets the filetype of empty .tex files in Vim 7 from 'plaintex' to 'tex'.
+let g:tex_flavor='latex'
+
+" =============== Custom Functions ===============
+" Removes blank spaces at the end of the lines.
+function! <SID>StripTrailingWhitespaces()
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    let @/=_s
+    call cursor(l, c)
+endfunction
+
+function! SmartTabComplete()
+    let line = getline('.')
+    let substr = strpart(line, -1, col('.')+1)
+    let substr = matchstr(substr, "[^ \t]*$")
+    if (strlen(substr)==0)
+    return "\<tab>"
+    endif
+    let has_period = match(substr, '\.') != -1
+    let has_slash = match(substr, '\/') != -1
+    let has_quotes = match(substr, '\') != -1
+    let has_double_quotes = match(substr, '\"') != -1
+    if (!has_period && !has_slash)
+    return "\<C-X>\<C-P>"
+    elseif (has_slash && !has_quotes && !has_double_quotes)
+    return "\<C-X>\<C-F>"
+    elseif (!has_quotes && !has_double_quotes)
+    return "\<C-X>\<C-O>"
+    else
+    return "\<tab>"
+    endif
+endfunction

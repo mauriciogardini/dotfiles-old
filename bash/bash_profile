@@ -1,0 +1,29 @@
+# Disable START/STOP output control.  Output from the system 
+# is stopped when the system receives STOP and started
+# when the system receives START, or if ixany is set, any
+# character restarts output.
+# ----------------------------------------------------------
+# Added to able the use of <C-s> and similar on VIM.
+stty -ixon
+
+# Once "vim" is executed, it will point to MacVim's VIM, 
+# and not Mac OS X's VIM, since the native one doesn't
+# have +ruby, +python and others.
+alias vi=vim
+alias ls="ls -la"
+alias grepc="grep -niR"
+alias apache-r="sudo apachectl restart"
+alias django_env_activate='cd ~/Virtualenvs/ && . django/bin/activate && cd ~/Sites/mauriciogardini/'
+
+# Tell ls to be colourful
+export CLICOLOR=1
+export LSCOLORS=gxexcxdxbxfxfxabagahxB
+
+# Tell grep to highlight matches
+export GREP_OPTIONS='--color=auto'
+export LC_CTYPE=POSIX
+export GREP_COLOR='05;31;40'
+
+# Defines locale
+export LC_CTYPE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
