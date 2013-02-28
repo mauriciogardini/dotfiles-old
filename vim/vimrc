@@ -59,7 +59,7 @@ set number
 " Shows tabstops, spaces and newlines.
 set list
 " Change the default tab and EOL characters.
-set listchars=tab:▸\ ,eol:¬
+set listchars=tab:▸\ ,eol:↲,trail:·
 " Will only fold when specified by a marker.
 set foldmethod=marker
 " Shows the status line.
