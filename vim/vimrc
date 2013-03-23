@@ -77,10 +77,17 @@ set laststatus=2
 set statusline=%<%f\ %m\%r\%y%=\ [%l\,%c]\ %LL
 
 " =============== Language-Specific Indentation Mods ===============
+" Defines custom FileTypes to certain extensions
+autocmd BufNewFile,BufRead *.slim setf slim
+autocmd BufNewFile,BufRead *.scss setf scss
+
 " Sets 2-spaces indentation for Ruby.
-autocmd Filetype ruby setlocal tabstop=2 softtabstop=2 shiftwidth=2
-autocmd FileType html setlocal shiftwidth=2 tabstop=2
-autocmd FileType python setlocal shiftwidth=4 softtabstop=4
+autocmd Filetype ruby setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd Filetype slim setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd Filetype css setlocal shiftwidth=4 tabstop=4 softtabstop=4
+autocmd Filetype scss setlocal shiftwidth=4 tabstop=4 softtabstop=4
+autocmd FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4
 
 " =============== Keyboard Remappings ===============
 " , - Leader
@@ -166,7 +173,8 @@ function! SmartTabComplete()
     let line = getline('.')
     let substr = strpart(line, -1, col('.')+1)
     let substr = matchstr(substr, "[^ \t]*$")
-    if (strlen(substr)==0)
+    let character = getline('.')[col('.')-1]
+    if (strlen(substr)==0 || strlen(character)!=0)
     return "\<tab>"
     endif
     let has_period = match(substr, '\.') != -1
