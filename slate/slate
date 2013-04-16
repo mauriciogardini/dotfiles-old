@@ -53,3 +53,7 @@ bind k:shift;ctrl focus up
 bind j:shift;ctrl focus down
 bind k:shift;ctrl;alt focus above
 bind j:shift;ctrl;alt focus behind
+
+# App Bindings
+bind u:alt focus 'iTerm'
+bind i:alt focus 'iTunes'
