@@ -34,3 +34,5 @@ export RBENV_ROOT=/usr/local/opt/rbenv
 
 # Sets vi mode
 set -o vi
+
+export PATH=/usr/local/bin:$PATH

@@ -81,10 +81,11 @@ set statusline=%<%f\ %m\%r\%y%=\ [%l\,%c]\ %LL
 autocmd BufNewFile,BufRead *.slim setf slim
 autocmd BufNewFile,BufRead *.scss setf scss
 
-" Sets 2-spaces indentation for Ruby.
+" Sets custom identation length to each language
 autocmd Filetype ruby setlocal shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
 autocmd Filetype slim setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd Filetype js setlocal shiftwidth=2 tabstop=2 softtabstop=2
 autocmd Filetype css setlocal shiftwidth=4 tabstop=4 softtabstop=4
 autocmd Filetype scss setlocal shiftwidth=4 tabstop=4 softtabstop=4
 autocmd FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4
@@ -108,7 +109,7 @@ vnoremap <tab> >gv
 vnoremap <s-tab> <gv
 " tab (Insert mode) - Autocompletes.
 inoremap <tab> <c-r>=SmartTabComplete()<CR>
-" Arrows - Moves between splits (Normal and insert mode).
+" Arrows (Normal and insert mode) - Moves between splits
 nnoremap <Up> <C-w>k
 nnoremap <Down> <C-w>j
 nnoremap <Left> <C-w>h
@@ -117,14 +118,20 @@ inoremap <Up> <NOP>
 inoremap <Down> <NOP>
 inoremap <Left> <NOP>
 inoremap <Right> <NOP>
+" Ctrl + j and Ctrl + k (Normal mode) - Moves between buffers
+nnoremap <C-J> :bnext<CR>
+nnoremap <C-K> :bprev<CR>
+" Ctrl + l and Ctrl + h (Normal mode) - Moves between tabs.
+nnoremap <C-L> :tabn<CR>
+nnoremap <C-H> :tabp<CR>
+" _ (Normal mode) - Switch text following the pre-configured parameters
+nnoremap _ :Switch<cr>
+nnoremap <silent><leader>2 :VimroomToggle<cr>
 " Disables arrows (Visual mode).
 vnoremap <Up> <NOP>
 vnoremap <Down> <NOP>
 vnoremap <Left> <NOP>
 vnoremap <Right> <NOP>
-" _ - Switch text following the pre-configured parameters (Normal mode)
-nnoremap _ :Switch<cr>
-nnoremap <silent><leader>2 :VimroomToggle<cr>
 " =============== Bundle-Specific Mods ===============
 " #Syntastic
 " Automatically opens Syntastic when there are errors and closes when they are fixed.
