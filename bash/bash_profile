@@ -12,7 +12,6 @@ stty -ixon
 alias vi=vim
 alias ls="ls -la"
 alias grepc="grep -niR"
-alias apache-r="sudo apachectl restart"
 alias django_env_activate='cd ~/Virtualenvs/ && . django/bin/activate && cd ~/Sites/mauriciogardini/'
 
 # Tell ls to be colourful
@@ -31,8 +30,5 @@ export LC_ALL=en_US.UTF-8
 # Sets rbenv
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 export RBENV_ROOT=/usr/local/opt/rbenv
-
-# Sets vi mode
-set -o vi
 
 export PATH=/usr/local/bin:$PATH
