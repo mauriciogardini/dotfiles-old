@@ -1,0 +1,6 @@
+" Python Mode
+Plugin 'klen/python-mode'
+" Improved status bar
+Plugin 'Lokaltog/vim-powerline'
+" Writing mode
+Plugin 'junegunn/goyo.vim'

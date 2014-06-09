@@ -1,17 +1,20 @@
+" =============== General Settings And Initializations ===============
 " Use vim settings rather than vi settings.
 set nocompatible
 
-" =============== Vundle Initialization ===============
-" Initializes vundle.
+" Initializes Vundle
 source ~/.vim/vundlerc
-" Load bundles.
-source ~/.vim/vundles
+
+" =============== Filetype Recognition ===============
+filetype on
+filetype plugin on
+filetype indent on
 
 " =============== Theme Enabling ===============
-" Enable color syntax highlighting.
-syntax enable
-colorscheme jellybeans
+" Enable color syntax highlighting
 set t_Co=256
+syntax on
+colorscheme jellybeans
 
 " =============== Indentation ===============
 " Controls how many columns a tab counts for.
@@ -45,8 +48,12 @@ set nowrap
 set ttyfast
 " Highlights the column in the 80th character.
 set textwidth=80
-set colorcolumn=+1
-highlight ColorColumn ctermbg=8
+highlight WidthLimitHighlight ctermbg=8
+highlight TODOHighlight ctermfg=88 ctermbg=7
+" TODO: Remove linebreak characters from this highlight
+call matchadd('WidthLimitHighlight', '\%81v', 100)
+" TODO: Make this expression to match all TODOs but the one below
+call matchadd('TODOHighlight', 'TODO:', 100)
 
 " =============== Encoding ===============
 set encoding=utf-8
@@ -77,94 +84,170 @@ set laststatus=2
 " %L - Number of lines.
 set statusline=%<%f\ %m\%r\%y%=\ [%l\,%c]\ %LL
 
-" =============== Language-Specific Indentation Mods ===============
-" Defines custom FileTypes to certain extensions
-autocmd BufNewFile,BufRead *.slim setf slim
-autocmd BufNewFile,BufRead *.scss setf scss
+" =============== Screen Splitting ===============
+" Opens a vertical split pane in the bottom instead of in the (default) top
+set splitbelow
+" Opens a horizontal split pane in the right instead of in the (default) left
+set splitright
 
-" Sets custom identation length to each language
-autocmd Filetype ruby setlocal shiftwidth=2 tabstop=2 softtabstop=2
-autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
-autocmd Filetype slim setlocal shiftwidth=2 tabstop=2 softtabstop=2
-autocmd Filetype js setlocal shiftwidth=2 tabstop=2 softtabstop=2
-autocmd Filetype css setlocal shiftwidth=4 tabstop=4 softtabstop=4
-autocmd Filetype scss setlocal shiftwidth=4 tabstop=4 softtabstop=4
-autocmd FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4
+" =============== Filetype-Specific Configuration ===============
+autocmd BufNewFile, BufRead *.slim setfiletype slim
+autocmd BufNewFile, BufRead *.scss setfiletype scss
+
+augroup filetype_css
+    autocmd!
+    autocmd FileType css setlocal shiftwidth=2
+    autocmd FileType css setlocal softtabstop=2
+    autocmd FileType css setlocal tabstop=2
+    " Disables all filetype-specific plugins
+    autocmd FileType css setlocal runtimepath-=~/.vim/bundle/python-mode
+    autocmd Filetype css setlocal runtimepath-=~/.vim/bundle/python-mode/after
+augroup END
+
+augroup filetype_html
+    autocmd!
+    autocmd FileType html setlocal shiftwidth=2
+    autocmd FileType html setlocal softtabstop=2
+    autocmd FileType html setlocal tabstop=2
+    " Disables all filetype-specific plugins
+    autocmd FileType html setlocal runtimepath-=~/.vim/bundle/python-mode
+    autocmd Filetype html setlocal runtimepath-=~/.vim/bundle/python-mode/after
+augroup END
+
+augroup filetype_js
+    autocmd!
+    autocmd FileType js setlocal shiftwidth=4
+    autocmd FileType js setlocal softtabstop=4
+    autocmd FileType js setlocal tabstop=4
+    " Disables all filetype-specific plugins
+    autocmd FileType js setlocal runtimepath-=~/.vim/bundle/python-mode
+    autocmd Filetype js setlocal runtimepath-=~/.vim/bundle/python-mode/after
+augroup END
+
+augroup filetype_python
+    autocmd!
+    autocmd FileType python setlocal shiftwidth=4
+    autocmd FileType python setlocal softtabstop=4
+    autocmd FileType python setlocal tabstop=4
+    autocmd Filetype python iabbr ipython import IPython; IPython.embed()
+augroup END
+
+augroup filetype_ruby
+    autocmd!
+    autocmd FileType ruby setlocal shiftwidth=2
+    autocmd FileType ruby setlocal softtabstop=2
+    autocmd FileType ruby setlocal tabstop=2
+    " Disables all filetype-specific plugins
+    autocmd FileType ruby setlocal runtimepath-=~/.vim/bundle/python-mode
+    autocmd Filetype ruby setlocal runtimepath-=~/.vim/bundle/python-mode/after
+augroup END
+
+augroup filetype_scss
+    autocmd!
+    autocmd FileType scss setlocal shiftwidth=2
+    autocmd FileType scss setlocal softtabstop=2
+    autocmd FileType scss setlocal tabstop=2
+    " Disables all filetype-specific plugins
+    autocmd FileType scss setlocal runtimepath-=~/.vim/bundle/python-mode
+    autocmd Filetype scss setlocal runtimepath-=~/.vim/bundle/python-mode/after
+augroup END
+
+augroup filetype_slim
+    autocmd!
+    autocmd FileType slim setlocal shiftwidth=2
+    autocmd FileType slim setlocal softtabstop=2
+    autocmd FileType slim setlocal tabstop=2
+    " Disables all filetype-specific plugins
+    autocmd FileType slim setlocal runtimepath-=~/.vim/bundle/python-mode
+    autocmd Filetype slim setlocal runtimepath-=~/.vim/bundle/python-mode/after
+augroup END
 
 " =============== Keyboard Remappings ===============
-" , - Leader
-let mapleader = ','
-" fn + F1 (Normal mode) - Shows Syntastic.
-nnoremap <silent><leader>1 :Errors<cr>
-" fn + F1 (Insert mode) - Hides Syntastic.
-inoremap <silent><leader>1 <esc>:Errors<cr>
-" Leader + F5 (Normal mode) - Strips trailing whitespaces.
-nnoremap <silent><leader>0 :call <SID>StripTrailingWhitespaces()<CR>
-" fn + z (Normal mode) - Clears search highlights.
-nnoremap <silent><leader>9 :noh<cr>
-" fn + Enter (Normal mode) - Break a line.
+" Gets the current OS. This setting will be used to set some keyboard remappings
+if has("unix")
+    if system('uname')=~'Darwin'
+        let os="mac"
+    else
+        let os="linux"
+    endif
+else
+    let os="windows"
+endif
+" space - Leader
+let mapleader=','
+" Leader + ev (Normal mode) - Opens the .vimrc for editing
+nnoremap <silent><leader>ev :vi $MYVIMRC<cr>
+" Leader + ev (Normal mode) - Reloads the .vimrc
+nnoremap <silent><leader>rv :source $MYVIMRC<cr>
+" Leader + s (Normal mode) - Strips trailing whitespaces
+nnoremap <silent><leader>t :call <SID>StripTrailingWhitespaces()<CR>
+" Leader + w (Normal mode) - Opens the writing mode (Goyo) view
+nnoremap <silent><leader>w :Goyo<cr>
+" Leader + / (Normal mode) - Clears search highlights
+nnoremap <silent><leader>/ :nohlsearch<cr>
+" Leader + Enter (Normal mode) - Break a line
 nnoremap <silent><leader><cr> i<cr><esc>
+" Leader + _ (Normal mode) - Max out the height of the current split
+nnoremap <silent><leader>_ <C-w>_
+" Leader + | (Normal mode) - Max out the width of the current split
+nnoremap <silent><leader>\| <C-w>\|
+" Leader + = (Normal mode) - Normalize all split sizes
+nnoremap <silent><leader>= <C-w>=
+" Leader + s (Normal mode) - Swaps top/bottom or left/right splits
+nnoremap <silent><leader>s <C-w>r
+" Leader + t (Normal mode) - Transforms the current file into a new tab
+nnoremap <silent><leader>x <C-w>T
+if os =~ "mac"
+    " Ctrl + c - Copies to clipboard
+    vnoremap <silent><C-c> :w !pbcopy<cr><cr>
+    " Ctrl + p - Pastes from clipboard
+    nnoremap <silent><C-p> :setlocal paste <bar>
+\       :r !pbpaste<cr><cr> <bar> :setlocal nopaste
+elseif os =~ "linux"
+    " Ctrl + c - Copies to clipboard
+    vnoremap <silent><C-c> :w !xclip -selection clipboard<cr><cr>
+    " Ctrl + p - Pastes from clipboard
+    nnoremap <silent><C-p> :setlocal paste <bar>
+\       :r !xclip -o -selection clipboard<cr><cr> <bar>
+\       :setlocal nopaste :setlocal nopaste
+endif
+" Tab/Shift-Tab (Normal mode) - Indents
 nnoremap <tab> >>
 nnoremap <s-tab> <<
 vnoremap <tab> >gv
 vnoremap <s-tab> <gv
-" tab (Insert mode) - Autocompletes.
-inoremap <tab> <c-r>=SmartTabComplete()<CR>
-" Arrows (Normal and insert mode) - Moves between splits
-nnoremap <Up> <C-w>k
-nnoremap <Down> <C-w>j
-nnoremap <Left> <C-w>h
-nnoremap <Right> <C-w>l
-inoremap <Up> <NOP>
-inoremap <Down> <NOP>
+" Ctrl + hjkl (Normal) - Moves between splits
+nnoremap <C-k> <C-w>k
+nnoremap <C-j> <C-w>j
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+" Disables arrows, page up/down, + and -
+" Hint: use ?, /, n, N, f, F, ;, <num>G, <num>W, <num>B, <num>|, 0, ^, $
 inoremap <Left> <NOP>
 inoremap <Right> <NOP>
-" Ctrl + j and Ctrl + k (Normal mode) - Moves between buffers
-nnoremap <C-J> :bnext<CR>
-nnoremap <C-K> :bprev<CR>
-" Ctrl + l and Ctrl + h (Normal mode) - Moves between tabs.
-nnoremap <C-L> :tabn<CR>
-nnoremap <C-H> :tabp<CR>
-" _ (Normal mode) - Switch text following the pre-configured parameters
-nnoremap _ :Switch<cr>
-nnoremap <silent><leader>2 :VimroomToggle<cr>
-" Disables arrows (Visual mode).
-vnoremap <Up> <NOP>
-vnoremap <Down> <NOP>
+inoremap <Up> <NOP>
+inoremap <Down> <NOP>
+inoremap <PageUp> <NOP>
+inoremap <PageDown> <NOP>
+nnoremap <Left> <NOP>
+nnoremap <Right> <NOP>
+nnoremap <Up> <NOP>
+nnoremap <Down> <NOP>
+nnoremap <PageUp> <NOP>
+nnoremap <PageDown> <NOP>
 vnoremap <Left> <NOP>
 vnoremap <Right> <NOP>
+vnoremap <Up> <NOP>
+vnoremap <Down> <NOP>
+vnoremap <PageUp> <NOP>
+vnoremap <PageDown> <NOP>
+vnoremap + <NOP>
+vnoremap - <NOP>
 " =============== Bundle-Specific Mods ===============
-" #Syntastic
-" Automatically opens Syntastic when there are errors and closes when they are fixed.
-let g:syntastic_auto_loc_list=1
-" Use '>>' to display syntax errors in the sign column.
-let g:syntastic_enable_signs=1
-
-" #VimRoom
-" Sets VimRoom width to 100 characters.
-let g:vimroom_width=100
-
-" #Switch
-" Sets Switch definitions.
-let g:switch_definitions =
-    \ [
-    \   ['True', 'False'],
-    \   ['true', 'false'],
-    \   ['&&', '||'],
-    \ ]
-" #LaTeX
-" Disable placeholders.
-let g:Imap_UsePlaceHolders=0
-" Disable folding.
-let g:Tex_Folding=0
-" Makes vim invoke Latex-Suite when you open a tex file (Required).
-filetype plugin on
-" Set the grep program to always generate a file-name.
-set grepprg=grep\ -nH\ $*
-" Enables automatic indentation as you type.
-filetype indent on
-" Sets the filetype of empty .tex files in Vim 7 from 'plaintex' to 'tex'.
-let g:tex_flavor='latex'
+" Disables folding on python-mode
+let g:pymode_folding = 0
+" Enables symbols on powerline (Used along with Inconsolata-dz-Powerline font)
+let g:Powerline_symbols = 'fancy'
 
 " =============== Custom Functions ===============
 " Removes blank spaces at the end of the lines.
@@ -176,26 +259,6 @@ function! <SID>StripTrailingWhitespaces()
     let @/=_s
     call cursor(l, c)
 endfunction
-
-function! SmartTabComplete()
-    let line = getline('.')
-    let substr = strpart(line, -1, col('.')+1)
-    let substr = matchstr(substr, "[^ \t]*$")
-    let character = getline('.')[col('.')-1]
-    if (strlen(substr)==0 || strlen(character)!=0)
-    return "\<tab>"
-    endif
-    let has_period = match(substr, '\.') != -1
-    let has_slash = match(substr, '\/') != -1
-    let has_quotes = match(substr, '\') != -1
-    let has_double_quotes = match(substr, '\"') != -1
-    if (!has_period && !has_slash)
-    return "\<C-X>\<C-P>"
-    elseif (has_slash && !has_quotes && !has_double_quotes)
-    return "\<C-X>\<C-F>"
-    elseif (!has_quotes && !has_double_quotes)
-    return "\<C-X>\<C-O>"
-    else
-    return "\<tab>"
-    endif
+" Gets the current OS
+function! GetCurrentOS()
 endfunction

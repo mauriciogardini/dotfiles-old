@@ -12,9 +12,9 @@ stty -ixon
 alias vi=vim
 alias ls="ls -la"
 alias grepc="grep -niR"
-alias django_env_activate='cd ~/Virtualenvs/ && . django/bin/activate && cd ~/Sites/mauriciogardini/'
 
 # Tell ls to be colourful
+export TERM=xterm-256color
 export CLICOLOR=1
 export LSCOLORS=gxexcxdxbxfxfxabagahxB
 

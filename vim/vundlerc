@@ -1,0 +1,10 @@
+" Sets the runtime path to include Vundle and initialize
+set runtimepath+=~/.vim/bundle/Vundle.vim
+" Starts Vundle initialization
+call vundle#begin()
+" Let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+" Load bundles.
+source ~/.vim/vundles
+" Ends Vundle initialization
+call vundle#end()
