@@ -1,5 +1,7 @@
 " Python Mode
-Plugin 'klen/python-mode'
+Plugin 'sheerun/vim-polyglot'
+" Syntax-Checking
+Plugin 'scrooloose/syntastic'
 " Improved status bar
 Plugin 'Lokaltog/vim-powerline'
 " Writing mode
